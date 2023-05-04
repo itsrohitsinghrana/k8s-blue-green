@@ -1,0 +1,39 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: blue-green-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: blue-green-virtual-service
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - blue-green-gateway
+  http:
+  - route:
+    - destination:
+        host: wordpress.blue.svc.cluster.local
+        port:
+          number: 80
+      weight: 100
+    - destination:
+        host: wordpress.green.svc.cluster.local
+        port:
+          number: 80
+      weight: 0
+
