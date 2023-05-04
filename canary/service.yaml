@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: custom-proxy-service
+  namespace: ingress-nginx
+spec:
+  selector:
+    app: custom-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+

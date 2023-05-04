@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-proxy
+  namespace: ingress-nginx
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: custom-proxy
+  template:
+    metadata:
+      labels:
+        app: custom-proxy
+    spec:
+      containers:
+      - name: custom-proxy
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: custom-proxy-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: custom-proxy-config
+        configMap:
+          name: custom-proxy-config
+
